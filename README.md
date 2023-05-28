@@ -15,7 +15,7 @@ This is a simple quiz app built using HTML, CSS, and JavaScript. It allows users
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/quiz-app.git
+   git clone https://github.com/sergeyvbo/quiz-app.git
 
 2. Navigate to the project directory:
    ```bash
@@ -36,4 +36,4 @@ This is a simple quiz app built using HTML, CSS, and JavaScript. It allows users
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
 ## License
-This project is licensed under the [MIT License](https://chat.openai.com/LICENSE).
+This project is licensed under the [MIT License](https://opensource.org/license/mit/).
