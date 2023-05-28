@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Javascript</title>
+  <title>Quiz App</title>
   <style>
     /* Styles for the quiz */
 
@@ -32,6 +32,18 @@
       background-color: white;
     }
 
+    .question:has(.correct) {
+      background-color:#dfd;
+    }
+
+    .question:has(.incorrect) {
+      background-color:#fdd;
+    }
+
+    .question:has(.missed-correct) {
+      background-color:#fdd;
+    }
+
     .reveal-button {
       margin-top: 10px;
     }
@@ -47,7 +59,7 @@
 
     .correct {
       color: limegreen;
-      font-weight:900
+      font-weight: 900
     }
 
     .missed-correct {
@@ -58,29 +70,84 @@
     .incorrect {
       color: red;
     }
+
+    button {
+      margin: 10px;
+      padding: 5px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
   <div class="quiz-container">
-    <h1>Javascript test</h1>
+    <h1>Quiz App</h1>
+    <div>
+      <label for="json-select">Select JSON File:</label>
+      <select id="json-select"></select>
+      <button type="button" onclick="loadQuestions()">Load Questions</button>
+    </div>
     <div id="quiz"></div>
     <button class="reveal-button" onclick="revealAnswers()">Reveal Answers</button>
     <div id="result" class="result"></div>
     <button class="restart-button" onclick="restartQuiz()">Restart Quiz</button>
   </div>
   <script>
-
     let data = null;
     let originalQuizHTML = '';
+    const jsonSelect = document.getElementById('json-select');
+
+    // Fetch the available JSON files in the same folder
+    fetchJsonFiles();
+
+    function fetchJsonFiles() {
+      let option = document.createElement('option');
+      option.value = "quiz-data.json";
+      option.text = "quiz-data.json";
+      jsonSelect.appendChild(option);
+      
+      option = document.createElement('option');
+      option.value = "js1.json";
+      option.text = "JS test 1 - 10";
+      jsonSelect.appendChild(option);
+
+      option = document.createElement('option');
+      option.value = "js2.json";
+      option.text = "JS test 11 - 20";
+      jsonSelect.appendChild(option);
+
+    }
+
+    function loadQuestions() {
+      const selectedFile = jsonSelect.value;
+      if (!selectedFile) {
+        return;
+      }
+
+      fetch(selectedFile)
+        .then(response => response.json())
+        .then(jsonData => {
+          data = jsonData;
+          generateQuizHTML();
+        })
+        .catch(error => {
+          console.error('Failed to load questions:', error);
+        });
+    }
+
+
 
     // Load the quiz data from a static JSON file
-    fetch('quiz-data.json')
-      .then(response => response.json())
-      .then(jsonData => {
-        data = jsonData;
-        generateQuizHTML();
-      });
+    // fetch('quiz-data.json')
+    //   .then(response => response.json())
+    //   .then(jsonData => {
+    //     data = jsonData;
+    //     generateQuizHTML();
+    //   });
 
     // Generate the quiz HTML dynamically
     function generateQuizHTML() {
