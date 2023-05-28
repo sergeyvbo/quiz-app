@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Quiz</title>
+  <style>
+    /* Styles for the quiz */
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .question {
+      margin-bottom: 10px;
+    }
+
+    .reveal-button {
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .readonly {
+      pointer-events: none;
+    }
+
+    .correct {
+      color: green;
+      font-weight: bold;
+    }
+
+    .missed-correct {
+      color: lightgreen;
+    }
+
+    .incorrect {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="quiz-container">
+    <h1>Test Quiz</h1>
+    <div id="quiz"></div>
+    <button class="reveal-button" onclick="revealAnswers()">Reveal Answers</button>
+    <div id="result" class="result"></div>
+    <button class="restart-button" onclick="restartQuiz()">Restart Quiz</button>
+  </div>
+
+  <script>
+    let data = null;
+    let originalQuizHTML = '';
+
+    // Load the quiz data from a static JSON file
+    fetch('quiz-data.json')
+      .then(response => response.json())
+      .then(jsonData => {
+        data = jsonData;
+        generateQuizHTML();
+      });
+
+    // Generate the quiz HTML dynamically
+    function generateQuizHTML() {
+      const quizContainer = document.getElementById('quiz');
+      let quizHTML = '';
+
+      // Iterate over each question in the data
+      data.questions.forEach((question, index) => {
+        quizHTML += '<div class="question">';
+        quizHTML += `<p><strong>${index + 1}:</strong> ${question.text}</p>`;
+
+        // Determine the input type based on the question type
+        if (question.type === 'single') {
+          // Single choice question (radio buttons)
+          question.choices.forEach(choice => {
+            quizHTML += `<label><input type="radio" name="question-${index}" value="${choice}" required>${choice}</label><br>`;
+          });
+        } else if (question.type === 'multiple') {
+          // Multiple choice question (checkboxes)
+          question.choices.forEach(choice => {
+            quizHTML += `<label><input type="checkbox" name="question-${index}" value="${choice}">${choice}</label><br>`;
+          });
+        }
+
+        quizHTML += '</div>';
+      });
+
+      originalQuizHTML = quizHTML;
+      quizContainer.innerHTML = quizHTML;
+    }
+
+    // Reveal the correct answers
+    function revealAnswers() {
+      const questions = document.querySelectorAll('.question');
+
+      questions.forEach(question => {
+        const answerInputs = question.querySelectorAll('input');
+        const correctAnswers = data.questions[Array.from(questions).indexOf(question)].correct;
+
+        answerInputs.forEach(input => {
+          const inputValue = input.value;
+          const isCorrect = correctAnswers.includes(inputValue);
+          const isChecked = input.checked;
+
+          if (isCorrect && isChecked) {
+            input.parentNode.classList.add('correct');
+          } else if (isCorrect && !isChecked) {
+            input.parentNode.classList.add('missed-correct');
+          } else if (!isCorrect && isChecked) {
+            input.parentNode.classList.add('incorrect');
+          }
+        });
+      });
+
+      disableQuiz();
+      calculateResult();
+    }
+
+    // Disable the quiz by making it read-only
+    function disableQuiz() {
+      const answerInputs = document.querySelectorAll('.question input');
+      answerInputs.forEach(input => {
+        input.disabled = true;
+      });
+
+      const revealButton = document.querySelector('.reveal-button');
+      revealButton.disabled = true;
+
+      const restartButton = document.querySelector('.restart-button');
+      restartButton.disabled = false;
+    }
+
+    // Calculate and display the result
+    function calculateResult() {
+      const questions = document.querySelectorAll('.question');
+      let correctCount = 0;
+
+      questions.forEach(question => {
+        const answerInputs = question.querySelectorAll('input');
+        const correctAnswers = data.questions[Array.from(questions).indexOf(question)].correct;
+        let allCorrectChecked = true;
+
+        answerInputs.forEach(input => {
+          if (correctAnswers.includes(input.value)) {
+            if (!input.checked) {
+              allCorrectChecked = false;
+            }
+          } else {
+            if (input.checked) {
+              allCorrectChecked = false;
+            }
+          }
+        });
+
+        if (allCorrectChecked) {
+          correctCount++;
+        }
+      });
+
+      const resultElement = document.getElementById('result');
+      resultElement.textContent = `You answered ${correctCount} out of ${questions.length} questions correctly.`;
+    }
+
+    // Restart the quiz
+    function restartQuiz() {
+      const quizContainer = document.getElementById('quiz');
+      quizContainer.innerHTML = originalQuizHTML;
+
+      const resultElement = document.getElementById('result');
+      resultElement.textContent = '';
+
+      const answerInputs = document.querySelectorAll('.question input');
+      answerInputs.forEach(input => {
+        input.checked = false;
+        input.disabled = false;
+        input.parentNode.classList.remove('correct');
+        input.parentNode.classList.remove('incorrect');
+      });
+
+      const revealButton = document.querySelector('.reveal-button');
+      revealButton.disabled = false;
+
+      const restartButton = document.querySelector('.restart-button');
+      restartButton.disabled = true;
+    }
+  </script>
+</body>
+
+</html>

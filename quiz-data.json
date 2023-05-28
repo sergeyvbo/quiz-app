@@ -1,0 +1,16 @@
+{
+  "questions": [
+    {
+      "text": "Question 1",
+      "type": "single",
+      "choices": ["Option 1", "Option 2", "Option 3"],
+      "correct": "Option 1"
+    },
+    {
+      "text": "Question 2",
+      "type": "multiple",
+      "choices": ["Option 1", "Option 2", "Option 3"],
+      "correct": ["Option 1", "Option 3"]
+    }
+  ]
+}
