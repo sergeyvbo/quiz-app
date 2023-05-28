@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Test question editor</title>
+  <style>
+    /* Styles for the quiz */
+
+    body {
+      background-color: aliceblue;
+    }
+
+    pre {
+      padding: 10px;
+      background-color: #eee;
+      border: 1px solid #ddd;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .question {
+      margin-bottom: 10px;
+      padding: 20px;
+      border: 1px solid grey;
+      background-color: white;
+    }
+
+    .reveal-button {
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .readonly {
+      pointer-events: none;
+    }
+
+    .correct {
+      color: limegreen;
+      font-weight: bold;
+    }
+
+    .missed-correct {
+      color: limegreen;
+      font-style: italic;
+    }
+
+    .incorrect {
+      color: red;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    label {
+      margin-top: 10px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    input[type="checkbox"] {
+      margin-top: 5px;
+    }
+
+    button {
+      display: block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #json-output {
+      width: 100%;
+      height: 200px;
+      margin-top: 20px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      resize: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Add Question to Quiz</h1>
+
+  <form id="question-form">
+    <label for="question-text">Question:</label>
+    <textarea rows="15" id="question-text" required></textarea>
+
+    <label for="answer-1">Answer 1:</label>
+    <textarea rows="3" id="answer-1" required></textarea>
+    <input type="checkbox" id="correct-answer-1">
+    <label for="correct-answer-1">Correct Answer</label>
+    <br/>
+
+    <label for="answer-2">Answer 2:</label>
+    <textarea rows="3" id="answer-2" required></textarea>
+    <input type="checkbox" id="correct-answer-2">
+    <label for="correct-answer-2">Correct Answer</label>
+    <br/>
+
+    <label for="answer-3">Answer 3:</label>
+    <textarea rows="3" id="answer-3" required></textarea>
+    <input type="checkbox" id="correct-answer-3">
+    <label for="correct-answer-3">Correct Answer</label>
+    <br/>
+
+    <label for="answer-4">Answer 4:</label>
+    <textarea rows="3" id="answer-4" required></textarea>
+    <input type="checkbox" id="correct-answer-4">
+    <label for="correct-answer-4">Correct Answer</label>
+    <br/>
+
+    <label for="answer-5">Answer 5:</label>
+    <textarea rows="3" id="answer-5" required></textarea>
+    <input type="checkbox" id="correct-answer-5">
+    <label for="correct-answer-5">Correct Answer</label>
+
+    <!-- Add more answer fields as needed -->
+    <br/>
+    <p>
+      <label for="question-type">Question Type:</label>
+      <select id="question-type" required>
+        <option value="single">Single Choice</option>
+        <option value="multiple">Multiple Choice</option>
+      </select>
+    </p>
+
+    <button type="button" onclick="generateQuestionObject()">Generate JSON</button>
+    <button type="button" onclick="clearForm()">Clear Form</button>
+  </form>
+
+  <h2>Generated JSON:</h2>
+  <textarea title="Generated JSON" id="json-output" rows="10" readonly></textarea>
+
+  <script>
+
+    function clearForm() {
+      document.getElementById('question-text').value = '';
+      document.getElementById('answer-1').value = '';
+      document.getElementById('correct-answer-1').checked = false;
+      document.getElementById('answer-2').value = '';
+      document.getElementById('correct-answer-2').checked = false;
+      document.getElementById('answer-3').value = '';
+      document.getElementById('correct-answer-3').checked = false;
+      document.getElementById('answer-4').value = '';
+      document.getElementById('correct-answer-4').checked = false;
+      document.getElementById('answer-5').value = '';
+      document.getElementById('correct-answer-5').checked = false;
+
+      document.getElementById('question-type').selectedIndex = 0;
+
+    }
+
+    function generateQuestionObject() {
+      const questionText = document.getElementById('question-text').value.trim();
+      const answer1 = document.getElementById('answer-1').value.trim();
+      const answer2 = document.getElementById('answer-2').value.trim();
+      const answer3 = document.getElementById('answer-3').value.trim();
+      const answer4 = document.getElementById('answer-4').value.trim();
+      const answer5 = document.getElementById('answer-5').value.trim();
+
+      const correctAnswers = [];
+      for (i = 1; i <=5; i++) {
+        if (document.getElementById(`correct-answer-${i}`).checked) {
+          correctAnswers.push(i);
+        }
+      }
+
+      const choices = [];
+      for (i = 1; i <=5; i++) {
+        const value = document.getElementById(`answer-${i}`).value.trim();
+        if (value) {
+          choices.push(value);
+        }
+      }
+      
+      const questionType = document.getElementById('question-type').value;
+
+      const questionObject = {
+        text: questionText,
+        type: questionType,
+        choices: choices,
+        correct: correctAnswers
+        // Add more choices as needed
+      };
+
+      const jsonOutput = JSON.stringify(questionObject, null, 2);
+      document.getElementById('json-output').value = jsonOutput;
+
+      navigator.clipboard.writeText(jsonOutput);
+    }
+  </script>
+</body>
+</html>

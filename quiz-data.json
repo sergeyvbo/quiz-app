@@ -1,16 +1,31 @@
 {
   "questions": [
     {
-      "text": "Question 1",
+      "text": "What is return type of async function in Javascript?",
       "type": "single",
-      "choices": ["Option 1", "Option 2", "Option 3"],
-      "correct": "Option 1"
+      "choices": [
+        "void",
+        "Number",
+        "Promise",
+        "await"
+      ],
+      "correct": [
+        3
+      ]
     },
     {
-      "text": "Question 2",
+      "text": "Which keywords are used in Javascript to declare a variable?",
       "type": "multiple",
-      "choices": ["Option 1", "Option 2", "Option 3"],
-      "correct": ["Option 1", "Option 3"]
+      "choices": [
+        "let",
+        "int",
+        "var",
+        "val"
+      ],
+      "correct": [
+        1,
+        3
+      ]
     }
   ]
 }
